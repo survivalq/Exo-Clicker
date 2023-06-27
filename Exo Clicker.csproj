@@ -6,13 +6,11 @@
     <RootNamespace>Exo_Clicker</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
+    <PublishAot>true</PublishAot>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="ClickableTransparentOverlay" Version="7.1.0" />
-    <PackageReference Include="Pastel" Version="4.1.0" />
-    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
 </Project>

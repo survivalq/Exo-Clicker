@@ -1,12 +1,9 @@
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
-using System.Windows.Forms;
 
-namespace Exo_Clicker.utils
+namespace Exo_Clicker.Utility
 {
     public class ClickerUtils
     {
@@ -19,13 +16,25 @@ namespace Exo_Clicker.utils
         [DllImport("user32.dll")]
         private static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
 
+        [DllImport("user32.dll")]
+        private static extern bool GetCursorPos(out POINT lpPoint);
+
+        [DllImport("user32.dll")]
+        private static extern bool SetCursorPos(int x, int y);
+
         private const int leftDown = 0x201;
         private const int leftUp = 0x202;
 
         private const int rightDown = 0x204;
         private const int rightUp = 0x205;
 
-        Random rnd = new Random();
+        private struct POINT
+        {
+            public int X;
+            public int Y;
+        }
+
+        private Random random = new Random();
 
         private string GetActiveWindowTitle()
         {
@@ -37,43 +46,44 @@ namespace Exo_Clicker.utils
             {
                 return Buff.ToString();
             }
-            return null;
+            return null!;
         }
 
-        public void leftClicker(int minCPS, int maxCPS, IntPtr hWnd)
+        public void LeftClicker(int minCPS, int maxCPS, IntPtr hWnd)
         {
             if (minCPS > maxCPS)
             {
                 minCPS = maxCPS - 1;
             }
 
-            int randomValue = rnd.Next(minCPS, maxCPS);
-            float interval = 925 / randomValue;
+            int randomValue = random.Next(minCPS, maxCPS);
+            float interval = 925f / randomValue;
             int value = (int)Math.Round(interval);
 
             PostMessage(hWnd, leftDown, 0, 0);
             PostMessage(hWnd, leftUp, 0, 0);
 
-            Thread.Sleep(value);
+            System.Threading.Thread.Sleep(value);
         }
-        public void rightClicker(int minCPS, int maxCPS, IntPtr hWnd)
+
+        public void RightClicker(int minCPS, int maxCPS, IntPtr hWnd)
         {
             if (minCPS > maxCPS)
             {
                 minCPS = maxCPS - 1;
             }
 
-            int randomValue = rnd.Next(minCPS, maxCPS);
-            float interval = 925 / randomValue;
+            int randomValue = random.Next(minCPS, maxCPS);
+            float interval = 925f / randomValue;
             int value = (int)Math.Round(interval);
 
             PostMessage(hWnd, rightDown, 0, 0);
             PostMessage(hWnd, rightUp, 0, 0);
 
-            Thread.Sleep(value);
+            System.Threading.Thread.Sleep(value);
         }
 
-        public void jitter(int strength)
+        public void Jitter(int strength)
         {
             if (strength <= 0)
                 strength = 1;
@@ -83,22 +93,25 @@ namespace Exo_Clicker.utils
             {
                 if (GetActiveWindowTitle() == process.MainWindowTitle)
                 {
-                    int randx = rnd.Next(1, strength);
-                    int randy = rnd.Next(1, strength);
+                    int randx = random.Next(1, strength);
+                    int randy = random.Next(1, strength);
 
-                    int randomPath = rnd.Next(1, 4);
+                    int randomPath = random.Next(1, 4);
 
-                    int mX = Control.MousePosition.X;
-                    int mY = Control.MousePosition.Y;
+                    POINT currentPosition;
+                    GetCursorPos(out currentPosition);
+
+                    int mX = currentPosition.X;
+                    int mY = currentPosition.Y;
 
                     if (randomPath == 1)
-                        Cursor.Position = new Point(mX - randx, mY - randy);
+                        SetCursorPos(mX - randx, mY - randy);
                     if (randomPath == 2)
-                        Cursor.Position = new Point(mX + randx, mY - randy);
+                        SetCursorPos(mX + randx, mY - randy);
                     if (randomPath == 3)
-                        Cursor.Position = new Point(mX - randx, mY + randy);
+                        SetCursorPos(mX - randx, mY + randy);
                     if (randomPath == 4)
-                        Cursor.Position = new Point(mX + randx, mY + randy);
+                        SetCursorPos(mX + randx, mY + randy);
                 }
             }
         }
